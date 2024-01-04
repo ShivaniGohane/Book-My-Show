@@ -17,12 +17,16 @@ public class Ticket {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     UUID id;
+    @JsonIgnore
     @ManyToOne
     ApplicationUser user;
+    @JsonIgnore
     @ManyToOne
     Movie movie;
+    @JsonIgnore
     @ManyToOne
     Hall hall;
+    @JsonIgnore
     @ManyToOne
     Show show;
 }

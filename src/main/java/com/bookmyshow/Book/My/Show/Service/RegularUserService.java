@@ -1,13 +1,12 @@
 package com.bookmyshow.Book.My.Show.Service;
 
+import com.bookmyshow.Book.My.Show.DTO.request.LoginDTO;
 import com.bookmyshow.Book.My.Show.DTO.request.RegularUserSignUpDTO;
+import com.bookmyshow.Book.My.Show.Exceptions.UnAuthorizedException;
+import com.bookmyshow.Book.My.Show.Exceptions.UserDoesNotExistException;
 import com.bookmyshow.Book.My.Show.Repository.ApplicationUserRepository;
 import com.bookmyshow.Book.My.Show.models.ApplicationUser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -25,6 +24,17 @@ public class RegularUserService{
         user.setPhoneNumber(regularUserSignUpDTO.getPhoneNumber());
         user.setType(regularUserSignUpDTO.getType().toString());
         applicationUserRepository.save(user);
+        return user;
+    }
+
+    public ApplicationUser login(LoginDTO loginDTO){
+        ApplicationUser user = getUserByEmail(loginDTO.getEmail());
+        if(user==null){
+            throw new UserDoesNotExistException(String.format("User with email id %s does not exist in system.", loginDTO.getEmail()));
+        }
+        if(!user.getPassword().equals(loginDTO.getPassword())){
+            throw new UnAuthorizedException("Wrong Credential.");
+        }
         return user;
     }
 
